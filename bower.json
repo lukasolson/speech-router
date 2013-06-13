@@ -1,0 +1,10 @@
+{
+  "name": "speech-router",
+  "version": "1.0.0",
+  "main": "speech-router.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components"
+  ]
+}
