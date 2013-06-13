@@ -1,55 +1,93 @@
-(function (global) {
+var SpeechRouter = (function () {
+	if (typeof webkitSpeechRecognition === "undefined") return null;
+	
 	var escapeRegExp  = /[\-{}\[\]+?.,\\\^$|#\s]/g,
 		optionalParam = /\((.*?)\)/g,
 		namedParam    = /(\(\?)?:\w+/g,
-		splatParam    = /\*\w+/g;
-
-	function SpeechRouter(routes) {
-		this.routes = [];
-		for (var key in routes) {
-			this.routes.push({
-				regex: this._convertRouteToRegExp(key),
-				callback: this[routes[key]] || routes[key]
-			});
-		}
-
-		var self = this, resultCount = 0;
-		this._recognition = new webkitSpeechRecognition();
-		this._recognition.continuous = true;
-		this._recognition.onresult = function (event) {
-			self.route(event.results[resultCount++][0].transcript.trim());
-		};
-	};
-
-	SpeechRouter.prototype = {
-		_convertRouteToRegExp: function _convertRouteToRegExp(key) {
-			key = key.replace(escapeRegExp, "\\$&")
+		splatParam    = /\*\w+/g,
+		convertFormatToRegExp = function (format) {
+			format = format
+				.replace(escapeRegExp, "\\$&")
 				.replace(optionalParam, "(?:$1)?")
 				.replace(namedParam, function (match, optional) {
 					return optional ? match : "(\\w+)";
 				})
 				.replace(splatParam, "(.*?)");
-			return new RegExp("^" + key + "$", "i");
+			return new RegExp("^" + format + "$", "i");
 		},
-	
-		route: function route(transcript) {
-			for (var i = 0; i < this.routes.length; i++) {
-				var result = this.routes[i].regex.exec(transcript);
+		trigger = function (transcript) {
+			console.log(transcript);
+			for (var i = 0; i < routes.length; i++) {
+				var result = routes[i].regex.exec(transcript);
 				if (result && result.length) {
 					result.splice(0, 1);
-					this.routes[i].callback.apply(this, result);
+					routes[i].callback.apply(routes[i].context, result);
 				}
 			}
-		},
+		};
 	
-		start: function start() {
-			this._recognition.start();
+	var speechRecognition = new webkitSpeechRecognition(),
+		routes = [],
+		recognizing = false;
+	
+	speechRecognition.continuous = true;
+//	speechRecognition.interimResults = true;
+	
+	speechRecognition.onresult = function (event) {
+		var finalTranscript = ""; //, interimTranscript = "";
+		for (var i = event.resultIndex; i < event.results.length; i++) {
+//			if (event.results[i].isFinal) {
+				finalTranscript += event.results[i][0].transcript;
+//			} else {
+//				interimTranscript += event.results[i][0].transcript;
+//			}
+		}
+		trigger(finalTranscript); // + interimTranscript);
+	};
+
+	function SpeechRouter(properties) {
+		if (!properties) return;
+		
+		for (var property in properties) {
+			this[property] = properties[property];
+		}
+		this.route(properties["routes"]);
+	}
+
+	SpeechRouter.prototype = {
+		route: function (format, callback) {
+			if (typeof format === "object") {
+				var routesObj = format;
+				for (var format in routesObj) {
+					this.route(format, routesObj[format]);
+				}
+			} else {
+				routes.push({
+					regex: convertFormatToRegExp(format),
+					callback: this[callback] || callback,
+					context: this
+				});
+			}
+		},
+		
+		trigger: function (transcript) {
+			trigger(transcript);
 		},
 
-		stop: function stop() {
-			this._recognition.stop();
+		start: function () {
+			if (!recognizing) {
+				recognizing = true;
+				speechRecognition.start();
+			}
+		},
+
+		stop: function () {
+			if (recognizing) {
+				recognizing = false;
+				speechRecognition.stop();
+			}
 		}
 	};
 	
-	global.SpeechRouter = SpeechRouter;
-})(this);
+	return SpeechRouter;
+})();
