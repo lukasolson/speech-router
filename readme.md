@@ -48,7 +48,7 @@ new SpeechRouter({
 	}
 });
 ```
-The function can either be a string that maps to a function, or a declared function. The format can contain parameters:
+The function can either be a string that maps to a function or an inline function. The format can contain parameters:
 - `:param` Matches any text not containing whitespace
 - `*param` Matches any text (with/without spaces)
 - `(optional)` Makes the selection optional (i.e., the route will fire the associated function regardless of whether or not the given text is found)
