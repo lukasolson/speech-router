@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<script type="text/javascript" src="speech-router.js"></script>
+		<script type="text/javascript">
+			var router = new SpeechRouter({
+				routes: {
+					"go to youtube": "youtube",
+					"say hello to :name": "sayHello",
+					"search :engine for *query": "search"
+				},
+				
+				youtube: function () {
+					window.location.href = "http://google.com";
+				},
+				
+				sayHello: function (name) {
+					alert("Hi, " + (name || "there") + "!");
+				},
+				
+				search: function (engine, query) {
+					window.open("http://" + engine + ".com/search?q=" + query);
+				}
+			});
+			
+			router.start();
+		</script>
+	</head>
+	<body></body>
+</html>

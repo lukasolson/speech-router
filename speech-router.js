@@ -42,7 +42,7 @@ var SpeechRouter = (function () {
 //				interimTranscript += event.results[i][0].transcript;
 //			}
 		}
-		trigger(finalTranscript); // + interimTranscript);
+		trigger(finalTranscript.trim()); // + interimTranscript);
 	};
 
 	function SpeechRouter(properties) {
