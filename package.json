@@ -1,0 +1,18 @@
+{
+  "name": "speech-router",
+  "version": "0.0.0",
+  "description": "Wrapper around Chrome's speech recognition APIs",
+  "main": "speech-router.js",
+  "scripts": {
+    "test": "node_modules/venus/bin/venus test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/sethmcl/speech-router.git"
+  },
+  "devDependencies": {
+    "venus": "2.1.13"
+  },
+  "author": "Lukas Olson",
+  "contributors": ["Seth McLaughlin"]
+}
