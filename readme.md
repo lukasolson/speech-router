@@ -1,3 +1,5 @@
+Note: A similar project with almost the exact same API, that is more actively developed can be found here: https://github.com/TalAter/annyang
+
 # Speech Router
 
 Speech Router is a wrapper around Chrome's speech recognition APIs. It enables you to declare "routes" (similar to [Backbone routes](http://backbonejs.org/#Router-routes)) which map speech to functionality within your application.
